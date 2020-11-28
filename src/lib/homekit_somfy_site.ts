@@ -55,7 +55,7 @@ export class HomekitSomfySite {
 
   private async initialize() {
     const result = await this.somfyAPI.getALLSites();
-    const site = result?.data?.items[0];
+    const site = result?.data?.items[1];
     if (site) {
       // set site id
       this.siteId = site.site_id;
