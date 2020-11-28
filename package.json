@@ -1,15 +1,15 @@
 {
-  "displayName": "Somfy Protect",
-  "name": "homebridge-somfy-protect",
+  "displayName": "Somfy Protect Multi",
+  "name": "homebridge-somfy-protect-multi",
   "version": "1.0.4",
   "description": "Allows somfy protect alarm to be exposed to homekit via myfox api.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/alxscms/homebridge-somfy-protect.git"
+    "url": "git://github.com/vincentdreano/homebridge-somfy-protect-multi.git"
   },
   "bugs": {
-    "url": "https://github.com/alxscms/homebridge-somfy-protect/issues"
+    "url": "https://github.com/vincentdreano/homebridge-somfy-protect-multi/issues"
   },
   "engines": {
     "node": ">=10.17.0",
