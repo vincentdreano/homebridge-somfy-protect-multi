@@ -36,6 +36,7 @@ That's it! The plugin will automatically add your Somfy Protect alarm in your ho
 ## Known limitations
 
 Having multiple homes set up in your Somfy Protect app is not supported yet as the plugin will choose one home arbitrarily. If this is something you need don't hesitate to post in the issues and I will see what I can do.
+> This repo is a temp repo to fix this issue, the code will be give to the real autor of the repo
 
 ## Help & Support
 Any feedback is welcome. For bugs, feature requests, open an issue here :)

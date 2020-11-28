@@ -57,18 +57,15 @@ export class HomekitSomfySite {
 
   private async initialize(config: SomfySiteConfig) {
     const result = await this.somfyAPI.getALLSites();
-    const itemsId = 0;
+    let itemsId = 0;
 
     for(const n in result?.data?.items) {
-      this.logger.info(`dev log, home label : ${result?.data?.items[n].label}`);
-      this.logger.info(`dev log, configured home : ${config.home}`);
       if(result?.data?.items[n].label == config.home) {
-        this.logger.info(`dev log, selected site : ${result?.data?.items[n].label}`);
-        // itemsId = n;
+        itemsId = parseInt(n);
       }
     }
-    this.logger.info(result?.data?.items[1].label);
-    const site = result?.data?.items[1];
+    const site = result?.data?.items[itemsId];
+    this.logger.info(`Selected site : ${site.label}`);
     if (site) {
       // set site id
       this.siteId = site.site_id;
