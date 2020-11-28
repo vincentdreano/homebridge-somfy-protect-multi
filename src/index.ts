@@ -56,6 +56,7 @@ class SomfyProtect implements AccessoryPlugin {
       username: config.username as string,
       password: config.password as string,
       loggingAmount: this.loggingAmount,
+      home: config.home as string,
     });
 
     this.informationService = new hap.Service.AccessoryInformation()

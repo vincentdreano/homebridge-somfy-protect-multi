@@ -34,6 +34,13 @@
         ],
         "required": true,
         "description": "How much log do you want (partial will inform only about state changes, full will inform you about everything)"
+      },
+      "home": {
+        "title": "Home name",
+        "type": "string",
+        "required": false,
+        "default": "Somfy Home Name",
+        "description": "Select the home name in the Somfy application"
       }
     }
   }

@@ -1,7 +1,7 @@
-import {Logging} from "homebridge";
-import {SomfyAPI} from "./somfy_api";
-import {EventEmitter} from "events";
-import {LoggingAmount} from "./logging_amout";
+import {Logging} from 'homebridge';
+import {SomfyAPI} from './somfy_api';
+import {EventEmitter} from 'events';
+import {LoggingAmount} from './logging_amout';
 import Timeout = NodeJS.Timeout;
 
 const POLL_INTERVAL = 10000;
@@ -10,6 +10,7 @@ interface SomfySiteConfig {
   username: string;
   password: string;
   loggingAmount: LoggingAmount;
+  home: string;
 }
 
 export enum State {
@@ -38,23 +39,35 @@ export class HomekitSomfySite {
     this.somfyAPI = new SomfyAPI(logger, {
       username: config.username,
       password: config.password,
-      loggingAmount: config.loggingAmount
+      loggingAmount: config.loggingAmount,
+      home: config.home,
     });
 
     this.emitter = new EventEmitter();
 
     // logging
-    this.emitter.addListener("currentStateChange", () => {
+    this.emitter.addListener('currentStateChange', () => {
       if (this.config.loggingAmount > LoggingAmount.OFF) {
         this.logger.info(`Current state changed: currentState=${this.currentState}, targetState=${this.targetState}`);
       }
     });
 
-    this.initialize().then(this.startPolling.bind(this));
+    this.initialize(config).then(this.startPolling.bind(this));
   }
 
-  private async initialize() {
+  private async initialize(config: SomfySiteConfig) {
     const result = await this.somfyAPI.getALLSites();
+    const itemsId = 0;
+
+    for(const n in result?.data?.items) {
+      this.logger.info(`dev log, home label : ${result?.data?.items[n].label}`);
+      this.logger.info(`dev log, configured home : ${config.home}`);
+      if(result?.data?.items[n].label == config.home) {
+        this.logger.info(`dev log, selected site : ${result?.data?.items[n].label}`);
+        // itemsId = n;
+      }
+    }
+    this.logger.info(result?.data?.items[1].label);
     const site = result?.data?.items[1];
     if (site) {
       // set site id
@@ -79,13 +92,13 @@ export class HomekitSomfySite {
       if (security_level) {
         // logging
         if (this.config.loggingAmount === LoggingAmount.FULL) {
-          this.logger.info("Poll security level with success, getting:", security_level);
+          this.logger.info('Poll security level with success, getting:', security_level);
         }
         const state = somfySecurityLevelToHomekitState(security_level);
         this.setCurrentState(state);
       }
     } else {
-      throw "Can't poll: HomekitSomfySite has not been properly initialized.";
+      throw 'Can\'t poll: HomekitSomfySite has not been properly initialized.';
     }
   }
 
@@ -96,7 +109,7 @@ export class HomekitSomfySite {
     } else {
       // logging
       if (this.config.loggingAmount === LoggingAmount.FULL) {
-        this.logger.info("startPolling: Polling already started");
+        this.logger.info('startPolling: Polling already started');
       }
     }
   }
@@ -108,7 +121,7 @@ export class HomekitSomfySite {
     } else {
       // logging
       if (this.config.loggingAmount === LoggingAmount.FULL) {
-        this.logger.info("stopPolling: Polling already stopped");
+        this.logger.info('stopPolling: Polling already stopped');
       }
     }
   }
@@ -117,7 +130,7 @@ export class HomekitSomfySite {
     if (this.currentState) {
       return this.currentState;
     } else {
-      throw "getCurrentState: HomekitSomfySite not properly initialized";
+      throw 'getCurrentState: HomekitSomfySite not properly initialized';
     }
   }
 
@@ -125,7 +138,7 @@ export class HomekitSomfySite {
     if (this.currentState !== state) {
       this.currentState = state;
       this.targetState = state; // needed when external changes are occurring
-      this.emitter.emit("currentStateChange");
+      this.emitter.emit('currentStateChange');
     }
   }
 
@@ -133,7 +146,7 @@ export class HomekitSomfySite {
     if (this.targetState) {
       return this.targetState;
     } else {
-      throw "getTargetState: HomekitSomfySite not properly initialized";
+      throw 'getTargetState: HomekitSomfySite not properly initialized';
     }
   }
 
@@ -143,7 +156,7 @@ export class HomekitSomfySite {
     if (this.siteId !== null) {
       // logging
       if (this.config.loggingAmount === LoggingAmount.FULL) {
-        this.logger.info("setTargetState", state);
+        this.logger.info('setTargetState', state);
       }
       this.somfyAPI.setSecurityLevel(this.siteId, homekitStateToSomfySecurityLevel(state))
         .then(() => setTimeout(this.startPolling.bind(this), 1000))
@@ -152,35 +165,35 @@ export class HomekitSomfySite {
   }
 
   onCurrentStateChange(callback: () => void) {
-    this.emitter.addListener("currentStateChange", callback);
+    this.emitter.addListener('currentStateChange', callback);
   }
 
   offCurrentStateChange(callback: () => void) {
-    this.emitter.removeListener("currentStateChange", callback);
+    this.emitter.removeListener('currentStateChange', callback);
   }
 
 }
 
-function somfySecurityLevelToHomekitState(securityLevel: "disarmed" | "armed" | "partial"): State {
+function somfySecurityLevelToHomekitState(securityLevel: 'disarmed' | 'armed' | 'partial'): State {
   switch (securityLevel) {
-    case "armed":
+    case 'armed':
       return State.AWAY_ARM;
-    case "partial":
+    case 'partial':
       return State.NIGHT_ARM;
-    case "disarmed":
+    case 'disarmed':
       return State.DISARMED;
   }
 }
 
-function homekitStateToSomfySecurityLevel(state: State): "disarmed" | "armed" | "partial" {
+function homekitStateToSomfySecurityLevel(state: State): 'disarmed' | 'armed' | 'partial' {
   switch (state) {
     case State.AWAY_ARM:
-      return "armed";
+      return 'armed';
     case State.NIGHT_ARM:
-      return "partial";
+      return 'partial';
     case State.DISARMED:
-      return "disarmed";
+      return 'disarmed';
     default:
-      throw "Unknown security level for " + state;
+      throw 'Unknown security level for ' + state;
   }
 }
