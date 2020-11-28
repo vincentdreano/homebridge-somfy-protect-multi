@@ -8,10 +8,10 @@ import {
   CharacteristicValue,
   HAP,
   Logging,
-  Service
-} from "homebridge";
-import {HomekitSomfySite, State} from "./lib/homekit_somfy_site";
-import {LoggingAmount} from "./lib/logging_amout";
+  Service,
+} from 'homebridge';
+import {HomekitSomfySite, State} from './lib/homekit_somfy_site';
+import {LoggingAmount} from './lib/logging_amout';
 
 let hap: HAP;
 
@@ -20,7 +20,7 @@ let hap: HAP;
  */
 export = (api: API) => {
   hap = api.hap;
-  api.registerAccessory("SomfyProtect", SomfyProtect);
+  api.registerAccessory('SomfyProtect', SomfyProtect);
 };
 
 class SomfyProtect implements AccessoryPlugin {
@@ -29,13 +29,13 @@ class SomfyProtect implements AccessoryPlugin {
     hap.Characteristic.SecuritySystemCurrentState.NIGHT_ARM,
     hap.Characteristic.SecuritySystemCurrentState.AWAY_ARM,
     hap.Characteristic.SecuritySystemCurrentState.DISARMED,
-    hap.Characteristic.SecuritySystemCurrentState.ALARM_TRIGGERED
+    hap.Characteristic.SecuritySystemCurrentState.ALARM_TRIGGERED,
   ];
 
   private readonly VALID_TARGET_STATE_VALUES = [
     hap.Characteristic.SecuritySystemTargetState.NIGHT_ARM,
     hap.Characteristic.SecuritySystemTargetState.AWAY_ARM,
-    hap.Characteristic.SecuritySystemTargetState.DISARM
+    hap.Characteristic.SecuritySystemTargetState.DISARM,
   ];
 
   private readonly logger: Logging;
@@ -55,11 +55,11 @@ class SomfyProtect implements AccessoryPlugin {
     this.somfySite = new HomekitSomfySite(logger, {
       username: config.username as string,
       password: config.password as string,
-      loggingAmount: this.loggingAmount
+      loggingAmount: this.loggingAmount,
     });
 
     this.informationService = new hap.Service.AccessoryInformation()
-      .setCharacteristic(hap.Characteristic.Manufacturer, "Somfy")
+      .setCharacteristic(hap.Characteristic.Manufacturer, 'Somfy')
       .setCharacteristic(hap.Characteristic.Model, this.name);
 
     this.securitySystemService = new hap.Service.SecuritySystem(this.name);
@@ -70,11 +70,11 @@ class SomfyProtect implements AccessoryPlugin {
           const currentState = this.somfySite.getCurrentState();
           // logging
           if (this.loggingAmount > LoggingAmount.OFF) {
-            this.logger.info("Current state of security system was requested, returning:", currentState);
+            this.logger.info('Current state of security system was requested, returning:', currentState);
           }
           callback(null, currentState);
         } else {
-          callback(new Error("An error occurred while getting the current security system state"));
+          callback(new Error('An error occurred while getting the current security system state'));
         }
       });
 
@@ -85,18 +85,18 @@ class SomfyProtect implements AccessoryPlugin {
           const targetState = this.somfySite.getTargetState();
           // logging
           if (this.loggingAmount > LoggingAmount.OFF) {
-            this.logger.info("Target state of security system was requested, returning:", targetState);
+            this.logger.info('Target state of security system was requested, returning:', targetState);
           }
           callback(null, targetState);
         } else {
-          callback(new Error("An error occurred while getting the target security system state"));
+          callback(new Error('An error occurred while getting the target security system state'));
         }
 
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         // logging
         if (this.loggingAmount > LoggingAmount.OFF) {
-          this.logger.info("Target state was set to:", value);
+          this.logger.info('Target state was set to:', value);
         }
         this.somfySite.setTargetState(value as State);
         callback(null, value);
@@ -109,7 +109,7 @@ class SomfyProtect implements AccessoryPlugin {
 
     // logging
     if (this.loggingAmount > LoggingAmount.OFF) {
-      this.logger.info("Security system finished initializing!");
+      this.logger.info('Security system finished initializing!');
     }
 
   }
@@ -121,7 +121,7 @@ class SomfyProtect implements AccessoryPlugin {
   getServices(): Service[] {
     return [
       this.informationService,
-      this.securitySystemService
+      this.securitySystemService,
     ];
   }
 
