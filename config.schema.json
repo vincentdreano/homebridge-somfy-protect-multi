@@ -1,6 +1,6 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
-  "pluginType": "platform",
+  "pluginAlias": "SomfyProtect",
+  "pluginType": "accessory",
   "singular": true,
   "schema": {
     "type": "object",
@@ -9,7 +9,31 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Somfy Protect"
+      },
+      "username": {
+        "title": "Username",
+        "type": "string",
+        "required": true,
+        "description": "Your Somfy account username"
+      },
+      "password": {
+        "title": "Password",
+        "type": "string",
+        "required": true,
+        "description": "Your Somfy account password"
+      },
+      "loggingAmount": {
+        "title": "Logging",
+        "type": "integer",
+        "default": 0,
+        "oneOf": [
+          {"title": "Off", "enum": [0]},
+          {"title": "Partial", "enum": [1]},
+          {"title": "Full", "enum": [2]}
+        ],
+        "required": true,
+        "description": "How much log do you want (partial will inform only about state changes, full will inform you about everything)"
       }
     }
   }
