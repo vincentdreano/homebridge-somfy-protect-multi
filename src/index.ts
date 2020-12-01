@@ -71,7 +71,7 @@ class SomfyProtect implements AccessoryPlugin {
           const currentState = this.somfySite.getCurrentState();
           // logging
           if (this.loggingAmount > LoggingAmount.OFF) {
-            this.logger.info('Current state of security system was requested, returning:', currentState);
+            this.logger.info('Current state of security system was requested, returning dd:', currentState);
           }
           callback(null, currentState);
         } else {
